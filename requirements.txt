@@ -1,0 +1,9 @@
+# Latest supported Gradio 6 line (PyPI latest checked 2026-10-08: 6.29.1).
+# Keep below 7 until the next major version is explicitly validated.
+gradio>=6.29.1,<7
+
+# Optional at runtime: notebook_hub falls back to urllib if requests is absent.
+requests>=2.31
+
+# Optional test runner: unittest is used automatically if pytest is unavailable.
+pytest>=8.0

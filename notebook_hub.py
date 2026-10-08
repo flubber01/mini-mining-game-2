@@ -5751,6 +5751,14 @@ APP_CSS = """
     border-radius: 16px; background: rgba(148, 163, 184, .045);
 }
 .hub-toolbar-row { gap: 12px; align-items: end !important; }
+@media (max-width: 980px) {
+    .agent-input-row, .agent-output-row {
+        display: grid !important; grid-template-columns: minmax(0, 1fr) !important; gap: 14px;
+    }
+    .agent-input-row > .column, .agent-output-row > .column {
+        width: 100% !important; min-width: 0 !important; flex: 1 1 100% !important;
+    }
+}
 @media (max-width: 760px) {
     .hub-toolbar-model-row { display: grid !important; grid-template-columns: minmax(0, 1fr) minmax(150px, .8fr); }
     .hub-toolbar-model-row > .column:first-child { grid-column: 1 / -1; }
@@ -6461,13 +6469,13 @@ def build_ui() -> Any:
                 mk(gr.Markdown,
                    f"### Synthetisiere komplexe Software-Systeme & Unit-Tests direkt im Workspace "
                    f"`{workspace_label}`\nLive-Streaming, AST-Prüfung, Test-Run und Logic-Self-Healing in einem Zug.")
-                with mk(gr.Row):
+                with mk(gr.Row, equal_height=False, elem_classes=["agent-input-row"]):
                     with mk(gr.Column, scale=3):
                         agent_url = mk(gr.Textbox, label="Spezifikations-URL / Server-Konfig",
                                        placeholder="http://localhost:7860 (optional)")
                         agent_uploads = mk(gr.File,
-                                           label="Architektur-/Text-Anforderungen (Dateien, ZIP, Ordner)",
-                                           file_count="multiple", type="filepath", height=118,
+                                           label="Spezifikationen und Projektdateien hochladen",
+                                           file_count="multiple", type="filepath", height=180,
                                            elem_classes=["hub-upload-compact"])
                         agent_objective = mk(gr.Textbox, label="Master Entwicklungs-Prompt (Work-Order)",
                                              value=DEFAULT_OBJECTIVE, lines=5, max_lines=20)
@@ -6895,7 +6903,9 @@ def build_ui() -> Any:
                 help_selftest.click(fn=ui_selftest, inputs=None, outputs=[help_selftest_out],
                                     **_private_api_kwargs())
 
-        demo.load(fn=ui_ws_refresh, inputs=None, outputs=[ws_tree, ws_file, ws_stats], **_private_api_kwargs())
+        load_kwargs = _supported_kwargs(demo.load, {"queue": False})
+        demo.load(fn=ui_ws_refresh, inputs=None, outputs=[ws_tree, ws_file, ws_stats],
+                  **load_kwargs, **_private_api_kwargs())
     return demo
 
 

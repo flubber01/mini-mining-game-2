@@ -490,7 +490,25 @@ class TestChatConfigAndLogging(WorkspaceTestCase):
         self.assertEqual(len(toolbar_rows), 3)
         compact_upload = next(component for component in demo.config.get("components", [])
                               if "hub-upload-compact" in component.get("props", {}).get("elem_classes", []))
-        self.assertEqual(compact_upload.get("props", {}).get("height"), 118)
+        self.assertEqual(compact_upload.get("props", {}).get("height"), 180)
+        self.assertEqual(compact_upload.get("props", {}).get("label"),
+                         "Spezifikationen und Projektdateien hochladen")
+        input_row = next(component for component in demo.config.get("components", [])
+                         if "agent-input-row" in component.get("props", {}).get("elem_classes", []))
+        output_row = next(component for component in demo.config.get("components", [])
+                          if "agent-output-row" in component.get("props", {}).get("elem_classes", []))
+        self.assertEqual(input_row.get("props", {}).get("equal_height"), False)
+        self.assertEqual(output_row.get("props", {}).get("equal_height"), False)
+        self.assertIn("@media (max-width: 980px)", nh.APP_CSS)
+        self.assertIn(".agent-input-row, .agent-output-row", nh.APP_CSS)
+        load_dependency = next(dependency for dependency in demo.config.get("dependencies", [])
+                               if any(len(target) > 1 and target[1] == "load"
+                                      for target in dependency.get("targets", [])))
+        self.assertFalse(load_dependency.get("queue", True))
+        timers = [component for component in demo.config.get("components", [])
+                  if component.get("type") == "timer"]
+        self.assertTrue(all(not component.get("props", {}).get("active", True)
+                            for component in timers))
         operations_table = next(component for component in demo.config.get("components", [])
                                 if component.get("type") == "dataframe"
                                 and component.get("props", {}).get("label") == "Datei-Operationen")

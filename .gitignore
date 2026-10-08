@@ -1,0 +1,18 @@
+# Python bytecode and test/linter caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Local environments
+.venv/
+venv/
+env/
+
+# Default notebook_hub workspace and runtime files (when workspace points here)
+/Test1/
+/omnihack/
+*.tmp[0-9]*
